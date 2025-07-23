@@ -73,6 +73,7 @@ class _MedicinesPageState extends State<MedicinesPage> {
       Navigator.of(context).pop();
     }
   }
+
  Future<void> deleteMedicine(String id, BuildContext context) async {
     showDialog(
       context: context,

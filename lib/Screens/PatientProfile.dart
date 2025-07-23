@@ -146,6 +146,11 @@ void _nextMonth() {
     return totalDaysWithScheduledMedicines > 0 ? (adherentDays / totalDaysWithScheduledMedicines) : 0.0;
   }
 
+  
+
+
+/// Calculates adherence only based on days that had scheduled doses.
+/// Days without any scheduled medications are ignored completely.
 /// Calculates adherence only based on days that had scheduled doses.
 /// Days without any scheduled medications are ignored completely.
 double calculateAdherenceBasedOnScheduledDays(List<Map<String, dynamic>> intakeLogs) {
@@ -171,8 +176,34 @@ double calculateAdherenceBasedOnScheduledDays(List<Map<String, dynamic>> intakeL
     if (allTaken) fullAdherenceDays++;
   });
 
-  return totalScheduledDays == 0 ? 0.0 : fullAdherenceDays / totalScheduledDays;
+  // هذا هو السطر الذي ستقوم بتعديله
+  return totalScheduledDays == 0 ? 0.0 : (fullAdherenceDays / totalScheduledDays) * 100;
 }
+// double calculateAdherenceBasedOnScheduledDays(List<Map<String, dynamic>> intakeLogs) {
+//   if (intakeLogs.isEmpty) return 0.0;
+
+//   // Filter valid logs with scheduled times
+//   final validLogs = intakeLogs.where((log) => log['scheduledTime'] != null).toList();
+
+//   // Group logs by date
+//   final Map<DateTime, List<Map<String, dynamic>>> groupedByDay = {};
+
+//   for (var log in validLogs) {
+//     final scheduled = log['scheduledTime'];
+//     final dateKey = DateTime(scheduled.year, scheduled.month, scheduled.day);
+//     groupedByDay.putIfAbsent(dateKey, () => []).add(log);
+//   }
+
+//   int totalScheduledDays = groupedByDay.length;
+//   int fullAdherenceDays = 0;
+
+//   groupedByDay.forEach((day, logs) {
+//     final allTaken = logs.every((log) => log['taken'] == true);
+//     if (allTaken) fullAdherenceDays++;
+//   });
+
+//   return totalScheduledDays == 0 ? 0.0 : fullAdherenceDays / totalScheduledDays;
+// }
 
   /// Gets the start date of the medicine regimen from the earliest scheduled intake log.
   DateTime? getStartDate(List<Map<String, dynamic>> intakeLogs) {
@@ -412,42 +443,7 @@ int getAdherenceDaysFromLogs(List<Map<String, dynamic>> intakeLogs) {
   );
 }
 
-////////
-  
-  // // دالة لحساب نسبة الالتزام
-  // double calculateAdherence(List<Map<String, dynamic>> intakeLogs) {
-  //   if (intakeLogs.isEmpty) return 0.0;
-  //   int totalScheduled = intakeLogs.length;
-  //   int totalTaken = intakeLogs.where((log) => log['taken']).length;
-  //   return totalScheduled > 0 ? (totalTaken / totalScheduled) : 0.0;
-  // }
 
-  // // دالة للحصول على تاريخ بدء الدواء
-  // DateTime? getStartDate(List<Map<String, dynamic>> intakeLogs) {
-  //   if (intakeLogs.isEmpty) return null;
-  //   // Find the earliest scheduled time.
-  //   DateTime? earliestDate;
-  //   for (var log in intakeLogs) {
-  //     DateTime scheduledTime = log['scheduledTime'];
-  //     if (earliestDate == null || scheduledTime.isBefore(earliestDate)) {
-  //       earliestDate = scheduledTime;
-  //     }
-  //   }
-  //   return earliestDate;
-  // }
-
-  // // دالة للحصول على عدد أيام الالتزام
-  // int getAdherenceDays(DateTime? startDate) {
-  //   if (startDate == null) return 0;
-  //   DateTime today = DateTime.now();
-  //   // Use toDate() to get rid of the time part.
-  //   return today
-  //       .difference(startDate.toLocal())
-  //       .inDays +
-  //       1; // +1 to include the start day
-  // }
-
-  
 
 /// تعديل دواء موجود
 void showEditMedicineDialog(DocumentSnapshot medicineDoc) {
